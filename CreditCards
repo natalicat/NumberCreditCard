@@ -6,7 +6,8 @@ namespace CA_CreditCard
 {
     class CreditCard
     {
-        public static int chRez = 0;
+        public static int chRez = 0
+        public string sL = string.Empty;
 
         static void Main(string[] args)
         {
@@ -99,10 +100,16 @@ namespace CA_CreditCard
             }
             sum2 = sum2 * 9;
             chRez = int.Parse(sum2.ToString().Substring(sum2.ToString().Length - 1, 1));
-            if (chRez == check2) sL = "введений коректно за методом Луна!";
-            else sL = "не є коректним за методом Луна! ";
-
-            return sL;
+            if (chRez == check2) 
+            {
+                sL = "введений коректно за методом Луна!";
+                return true;
+            }
+            else 
+            {
+                sL = "не є коректним за методом Луна! ";
+                return false;
+            }
 
         }
 
