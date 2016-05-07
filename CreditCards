@@ -1,0 +1,127 @@
+using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace CA_CreditCard
+{
+    class CreditCard
+    {
+        public static int chRez = 0;
+
+        static void Main(string[] args)
+        {
+            String cNumberCreditCard = string.Empty;
+            Int64 nOut = 0;
+            bool Rez1 = false;
+            do
+            {
+                //Введіть номер банківської карти:
+                Console.WriteLine("Введiть номер банкiвськоi карти: ");
+                cNumberCreditCard = Console.ReadLine();
+                Console.ReadLine();
+                cNumberCreditCard = cNumberCreditCard.Replace(" ", "");
+                Rez1 = Int64.TryParse(cNumberCreditCard, out nOut);
+                if (cNumberCreditCard.Length < 12 || cNumberCreditCard.Length > 19 || nOut < 0)
+                {
+                    //Невірно введений номер банківської карти
+                    Console.WriteLine("Невiрно введений номер банкiвськоi карти !");
+                    Console.ReadLine();
+                    Rez1 = false;
+                }
+            }
+            while (!Rez1);
+
+            // Вендор кредитної картки
+            Console.WriteLine("Вендор кредитноi картки: {0}", GetCreditCardVendor(cNumberCreditCard));
+            Console.ReadLine();
+
+            // коректність переданого в параметрі номера картки
+            Console.WriteLine("Номер кредитноi картки {0}", IsCreditCardNumberValid(cNumberCreditCard));
+            Console.WriteLine("Контрольна цифра: {0}", chRez.ToString());
+            Console.ReadLine();
+
+            // для переданого в параметрі номера картки визначить наступний
+            Console.WriteLine("Наступний номер кредитноi картки {0}", GenerateNextCreditCardNumber(cNumberCreditCard));
+            Console.ReadLine();
+        }
+
+        private static string GetCreditCardVendor(string cNumberCard)
+        {
+            string CardVendor;
+            int iN = 0;
+
+            iN = int.Parse(cNumberCard.Substring(0, 1));
+
+            if (iN == 4) CardVendor = "VISA";
+            else
+            {
+                iN = int.Parse(cNumberCard.Substring(0, 2));
+
+                if (iN == 34 || iN == 37) CardVendor = "American Express";
+                else if (iN >= 51 & iN <= 55) CardVendor = "MasterCard";
+                else if (iN == 50 || iN >= 56 & iN <= 69) CardVendor = "Maestro";
+                else
+                {
+                    iN = int.Parse(cNumberCard.Substring(0, 4));
+                    //JCB		3528-3589
+                    if (iN >= 3528 & iN <= 3589) CardVendor = "JCB";
+                    else
+                    {
+                        CardVendor = "Unknown";
+                    }
+                }
+            }
+            return CardVendor;
+        }
+
+        private static string IsCreditCardNumberValid(string cNumberCard)
+        {
+            string sL;
+            char[] ch2 = cNumberCard.ToCharArray();
+            int l2 = 0;
+            l2 = cNumberCard.Length;
+            int check2 = 0;
+            //остання цифра
+            check2 = int.Parse(ch2[l2 - 1].ToString());
+            int par1 = 0;
+            int sum2 = 0;   //сума цифр
+            for (int i = l2 - 2; i >= 0; i--)
+            {
+                par1 = 0;
+                par1 = int.Parse(ch2[i].ToString()) * 2;
+                if (par1.ToString().Length == 2) sum2 = sum2 + int.Parse(par1.ToString().Substring(0, 1)) + int.Parse(par1.ToString().Substring(1, 1));
+                else sum2 = sum2 + par1;
+                if (i != 0)
+                {
+                    i = i - 1;
+                    sum2 = sum2 + int.Parse(ch2[i].ToString());
+                }
+            }
+            sum2 = sum2 * 9;
+            chRez = int.Parse(sum2.ToString().Substring(sum2.ToString().Length - 1, 1));
+            if (chRez == check2) sL = "введений коректно за методом Луна!";
+            else sL = "не є коректним за методом Луна! ";
+
+            return sL;
+
+        }
+
+        public static string GenerateNextCreditCardNumber(string cNumberCard)
+        {
+            string cNextNumberCard;
+            string sPar = "";
+            sPar = cNumberCard.Substring(0, cNumberCard.Length - 1);
+            Int64 nOutPar = 0;
+            bool Rez3 = false;
+            Rez3 = Int64.TryParse(sPar, out nOutPar);
+            if (Rez3 == true) nOutPar = nOutPar + 1;
+
+            cNextNumberCard = nOutPar.ToString() + "0";
+            IsCreditCardNumberValid(cNextNumberCard);
+            cNextNumberCard = nOutPar.ToString() + chRez.ToString();
+            return cNextNumberCard;
+        }
+
+    }
+
+}
