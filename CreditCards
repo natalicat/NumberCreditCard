@@ -6,8 +6,8 @@ namespace CA_CreditCard
 {
     class CreditCard
     {
-        public static int chRez = 0
-        public string sL = string.Empty;
+        public static int chRez = 0;
+        public static string sL = string.Empty;
 
         static void Main(string[] args)
         {
@@ -37,12 +37,16 @@ namespace CA_CreditCard
             Console.ReadLine();
 
             // коректність переданого в параметрі номера картки
-            Console.WriteLine("Номер кредитноi картки {0}", IsCreditCardNumberValid(cNumberCreditCard));
+            Console.WriteLine("Номер кредитноi картки коректний? {0}", IsCreditCardNumberValid(cNumberCreditCard));
+            Console.WriteLine("Номер кредитноi картки {0}", sL.ToString());
             Console.WriteLine("Контрольна цифра: {0}", chRez.ToString());
             Console.ReadLine();
 
             // для переданого в параметрі номера картки визначить наступний
-            Console.WriteLine("Наступний номер кредитноi картки {0}", GenerateNextCreditCardNumber(cNumberCreditCard));
+            if (GetCreditCardVendor(cNumberCreditCard) == GetCreditCardVendor(GenerateNextCreditCardNumber(cNumberCreditCard)))
+                Console.WriteLine("Наступний номер кредитноi картки {0}", GenerateNextCreditCardNumber(cNumberCreditCard));
+            else Console.WriteLine("Нових номерiв кредитноi картки для вендора {0} немає!", GetCreditCardVendor(cNumberCreditCard));
+
             Console.ReadLine();
         }
 
@@ -52,20 +56,20 @@ namespace CA_CreditCard
             int iN = 0;
 
             iN = int.Parse(cNumberCard.Substring(0, 1));
-
+            if (IsCreditCardNumberValid(cNumberCard) == false) return "Unknown";
             if (iN == 4) CardVendor = "VISA";
             else
             {
                 iN = int.Parse(cNumberCard.Substring(0, 2));
 
-                if (iN == 34 || iN == 37) CardVendor = "American Express";
-                else if (iN >= 51 & iN <= 55) CardVendor = "MasterCard";
+                if ((iN == 34 || iN == 37) & cNumberCard.Length==15) CardVendor = "American Express";
+                else if (iN >= 51 & iN <= 55 & cNumberCard.Length==16) CardVendor = "MasterCard";
                 else if (iN == 50 || iN >= 56 & iN <= 69) CardVendor = "Maestro";
                 else
                 {
                     iN = int.Parse(cNumberCard.Substring(0, 4));
                     //JCB		3528-3589
-                    if (iN >= 3528 & iN <= 3589) CardVendor = "JCB";
+                    if (iN >= 3528 & iN <= 3589 & cNumberCard.Length == 16) CardVendor = "JCB";
                     else
                     {
                         CardVendor = "Unknown";
@@ -75,9 +79,9 @@ namespace CA_CreditCard
             return CardVendor;
         }
 
-        private static string IsCreditCardNumberValid(string cNumberCard)
+        private static bool IsCreditCardNumberValid(string cNumberCard)
         {
-            string sL;
+            //string sL;
             char[] ch2 = cNumberCard.ToCharArray();
             int l2 = 0;
             l2 = cNumberCard.Length;
@@ -132,3 +136,4 @@ namespace CA_CreditCard
     }
 
 }
+
